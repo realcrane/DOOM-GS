@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>(function(){try{if(localStorage.getItem('theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+
+  <title>DOOM-GS: Dynamic Out-of-core Optimization for Massive Gaussian Splatting</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header class="top-nav" role="navigation" aria-label="Primary">
+    <div class="nav-inner">
+      <nav class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#results">Results</a>
+        <a href="#dataset">Dataset</a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch color theme" title="Switch theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="hero">
+      <h1 class="wordmark grad-text">DOOM-GS</h1>
+      <p class="paper-title">Dynamic Out-of-core Optimization for Massive Gaussian Splatting</p>
+
+      <div class="authors">
+        <span class="author"><a href="https://yilmazdoga.net">Doğa Yılmaz</a><sup>1</sup></span>
+        <span class="author"><a href="https://vcg.leeds.ac.uk/profiles/jialin-zhu/">Jialin Zhu</a><sup>2</sup></span>
+        <span class="author"><a href="https://binglunwang.github.io/">Binglun Wang</a><sup>1</sup></span>
+        <span class="author"><a href="https://drhewang.com/">He Wang</a><sup>1</sup></span>
+      </div>
+      <div class="affils">
+        <span><sup>1</sup> University College London</span>
+        <span><sup>2</sup> Baidu Research</span>
+      </div>
+
+      <div class="button-row">
+        <a class="btn" href="https://arxiv.org/abs/2611.22805">
+          <svg viewBox="0 0 448 512" aria-hidden="true"><g transform="matrix(1.5499998,0,0,-1.5499998,-123.19936,553.59966)"><path d="m 119.65,351.996 c -5.84961,0.13477 -11.1943,-3.29883 -13.502,-8.67578 -2.19629,-5.27051 -0.61914,-8.9668 4.19727,-15.8652 7.05469,-10.3799 78.8242,-96.5625 78.8242,-96.5625 l -15.8828,-14.8633 c -13.3809,-13.3779 -13.9561,-31.333 -1.50977,-43.7754 l 18.4922,-17.6133 -51.5977,-63.377 c -4.00586,-4.26758 -6.48535,-11.7559 -4.24805,-17.1309 2.27832,-5.53613 7.69727,-9.12891 13.6836,-9.07031 3.83398,0.0957 7.43262,1.87402 9.83789,4.86133 l 61.3691,57.0566 94.5762,-90.0703 c 3.19434,-3.08398 7.44336,-4.83984 11.8828,-4.91016 1.60449,0.0039 3.19824,0.245117 4.73242,0.714844 5.7793,1.80566 10.249,6.41797 11.8711,12.252 1.2998,5.47363 -0.27637,11.2334 -4.18164,15.2832 l -83.0859,100.011996 14.8789,13.834 c 11.0957,10.0029 11.1543,27.3906 0.12695,37.4688 l -16.2949,15.6309 56.2559,66.4434 0.0742,0.0859 0.0664,0.0899 c 5.02734,6.53125 7.43164,11.5615 4.83984,17.9395 -3.13379,5.96875 -8.69727,10.29 -15.2559,11.8516 -0.67676,0.0908 -1.35938,0.13574 -2.04297,0.13671 l -0.004,-0.0117 c -4.42871,-0.27051 -8.61035,-2.13086 -11.7754,-5.24023 l -0.13086,-0.10743 -0.12304,-0.11132 -65.207,-59.127 -89.8965,86.2402 c 0,0 -5.33398,6.47754 -10.9707,6.61133 z m 178.104,-33.041 c 0.47852,-0.002 0.95703,-0.0332 1.43164,-0.0957 4.84277,-1.33301 8.95605,-4.54004 11.4316,-8.91016 1.44922,-3.5625 1.00293,-6.45703 -4.19727,-13.2148 l -56.0586,-66.2188 -26.375,25.3027 64.9551,58.9062 c 2.33887,2.41504 5.46484,3.91113 8.8125,4.2168 v 0.0137 z M 192.436,227.402 334.446,57.244 c 2.78711,-3.48926 4.5293,-6.97949 3.3418,-10.9121 -1.16113,-4.30273 -4.43457,-7.71777 -8.68555,-9.05664 -1.08105,-0.333984 -2.20508,-0.503906 -3.33594,-0.505859 -3.20801,0.07617 -6.26953,1.35645 -8.57617,3.58789 l -142.033,135.284999 c -11.1719,11.1719 -9.48242,26.0195 1.39258,36.8945 z"/></g></svg>
+          <span class="btn-label">Preprint</span>
+        </a>
+        <span class="btn todo" aria-disabled="true">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span class="btn-label">Code<small>coming soon</small></span>
+        </span>
+        <span class="btn todo" aria-disabled="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4zm0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z"/></svg>
+          <span class="btn-label">Data<small>coming soon</small></span>
+        </span>
+      </div>
+    </div>
+
+    <section class="showcase" aria-label="Showcase">
+      <figure>
+        <div class="media-frame">
+          <video class="loop-video" src="https://doomgs.cdn.yilmazdoga.net/videos/showcase/showcase_cycle.mp4" width="1920" height="1080" muted loop playsinline autoplay preload="auto"></video>
+        </div>
+        <figcaption>
+          <b>Free-view render using DOOM-GS.</b> The 4-second animation loops during the render.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="teaser" aria-label="Teaser">
+      <figure>
+        <div class="media-frame">
+          <img class="dark-only" src="assets/images/teaser.webp" width="2400" height="686"
+               alt="DOOM-GS overview: Gaussians stored on SSD in fixed-size blocks, cached in CPU memory and loaded to the GPU when spatially visible and temporally supported; camera scheduling selects one view per camera per pass.">
+          <img class="light-only" src="assets/images/teaser_light.webp" width="2400" height="686"
+               alt="DOOM-GS overview: Gaussians stored on SSD in fixed-size blocks, cached in CPU memory and loaded to the GPU when spatially visible and temporally supported; camera scheduling selects one view per camera per pass.">
+        </div>
+        <figcaption>
+          <b>DOOM-GS overview.</b>
+          <i>Left:</i> Gaussians are stored on SSD in fixed-size blocks, with frequently accessed blocks cached in CPU memory.
+          A block enters the dynamic working set <i>&#x1D4A6;</i>(<i>&#x1D49E;</i>) when its motion-aware bounding sphere of radius
+          <i>R<sub>k</sub></i> is spatially visible and the camera timestamp lies within its temporal support <i>S<sub>k</sub></i>.
+          Green and orange blocks are selected by one camera, <span class="dark-only">lavender</span><span class="light-only">dark blue</span> blocks by both, and hollow blocks by neither due to spatial or temporal culling.
+          <i>Right:</i> Each scheduling pass selects one view from every camera. The next unused camera maximizes
+          <i>J</i>(<i>c</i>,&thinsp;<i>c&prime;</i>), and its least-used frame is selected with ties resolved by proximity to <i>t<sub>f</sub></i>.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section id="abstract" aria-label="Abstract">
+      <h2 class="section-title grad-text">Abstract</h2>
+      <div class="section-body abstract-body">
+        <p>
+          Traditional Gaussian Splatting (GS) methods use in-core training, i.e. assuming that GPU memory is large enough
+          to accommodate all the primitives. This assumption breaks down when the primitives exceed the capacity of GPU
+          memory, e.g. GS on large environments. Recent out-of-core training research starts to address this issue, but
+          is limited to static scenes. Unlike static GS, dynamic GS primitives move in space and time, breaking common
+          assumptions held in existing out-of-core research and impose new challenges in memory management and training.
+          To this end, we propose Dynamic Out-of-core Optimization for Massive Gaussian Splatting (DOOM-GS), the first
+          out-of-core optimization method designed specifically for massive-scale dynamic GS. DOOM-GS is equipped with
+          novel memory management strategies that optimize caching for spatio-temporal primitives, and a fast learning
+          method for large numbers of primitives. Due to the lack of suitable datasets for large-scale dynamic GS, we also
+          contribute a new dataset for evaluation. Since there are no directly comparable methods, we adapt several
+          closely related methods for comparison. Through extensive evaluation, we demonstrate the effectiveness of
+          DOOM-GS which now makes it possible to reconstruct city-scale dynamic scenes with high quality on moderate
+          hardware, serving as a foundational tool for diverse future research and applications.
+        </p>
+      </div>
+    </section>
+
+    <section id="results" aria-label="Results">
+      <h2 class="section-title grad-text">Results</h2>
+      <div class="section-body">
+        <p class="lead">
+          Held-out test videos of every experiment in the paper on <b>DynamicMatrixCity</b>. Each window shows twelve
+          held-out cameras at a time: the <b>top row</b> shows aerial cameras and the <b>two rows below</b> street-level
+          cameras. Pick a scene and a method, then <b>drag the divider</b> to wipe between
+          <b class="ours">DOOM-GS (Ours)</b> on the left and the selected method on the right.
+        </p>
+
+        <div class="cmp" id="native-dynamic" data-part="native">
+          <h3 class="subhead">1. Native Dynamic Comparison</h3>
+          <p>
+            <b class="ours">DOOM-GS (Ours)</b> against <b>Dynamic TideGS</b>, a dynamic variant of TideGS with the same
+            dynamic Gaussian representation. Both optimize a single 20M-Gaussian model over the full 120-frame sequence
+            under the same 1,800-block GPU budget.
+          </p>
+          <div class="exp-controls cmp-controls">
+            <div class="exp-group" data-axis="scene">
+              <div class="exp-group-label">Scene</div>
+              <div class="exp-btns"></div>
+            </div>
+            <div class="exp-group" data-axis="other">
+              <div class="exp-group-label"></div>
+              <div class="exp-btns"></div>
+            </div>
+          </div>
+          <figure class="exp-figure cmp-wide">
+            <div class="cmp-player" tabindex="0" role="group" aria-label="Comparison player" aria-keyshortcuts="Space K F ArrowLeft ArrowRight">
+              <div class="cmp-stage">
+                <div class="ab-slider">
+                  <div class="ab-bottom"><video class="vid-other" muted loop playsinline preload="metadata"></video></div>
+                  <div class="ab-top"><div class="ab-inner"><video class="vid-ours" muted loop playsinline preload="metadata"></video></div></div>
+                  <span class="ab-label left"></span>
+                  <span class="ab-label right"></span>
+                  <div class="ab-handle" aria-hidden="true">
+                    <span class="grip"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5V7zm8 0v10l5-5-5-5z"/></svg></span>
+                  </div>
+                </div>
+              </div>
+              <div class="cmp-bar">
+                <button type="button" class="exp-chip cmp-btn cmp-play" aria-label="Pause (Space)" title="Pause (Space)">
+                  <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg>
+                  <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.14v13.72a.5.5 0 0 0 .76.43l10.6-6.86a.5.5 0 0 0 0-.86L8.76 4.71A.5.5 0 0 0 8 5.14z"/></svg>
+                </button>
+                <span class="cmp-clock"><span class="cmp-cur">0:00.0</span> / <span class="cmp-dur">0:00.0</span></span>
+                <div class="cmp-seek" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00.0">
+                  <div class="cmp-seek-rail"><div class="cmp-seek-fill"></div><div class="cmp-seek-ticks"></div></div>
+                  <div class="cmp-seek-knob"></div>
+                </div>
+                <span class="cmp-time"></span>
+                <button type="button" class="exp-chip cmp-btn cmp-fs" aria-label="Full screen (F)" title="Full screen (F)">
+                  <svg class="ico-fs-enter" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>
+                  <svg class="ico-fs-exit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>
+                </button>
+              </div>
+            </div>
+          </figure>
+        </div>
+
+        <div class="cmp" id="per-frame" data-part="perframe">
+          <h3 class="subhead">2. Per-Frame Dynamic Comparison</h3>
+          <p>
+            One <b class="ours">DOOM-GS (Ours)</b> model for the whole sequence (2.5M Gaussians) against per-frame
+            <b>TideGS</b>, <b>CLM-GS</b> and <b>A LoD of Gaussians</b>, which train an independent 2.5M-Gaussian model for
+            each of the 120 frames. Watch for flicker in regions that are static in the ground truth.
+          </p>
+          <div class="exp-controls cmp-controls">
+            <div class="exp-group" data-axis="scene">
+              <div class="exp-group-label">Scene</div>
+              <div class="exp-btns"></div>
+            </div>
+            <div class="exp-group" data-axis="other">
+              <div class="exp-group-label"></div>
+              <div class="exp-btns"></div>
+            </div>
+          </div>
+          <figure class="exp-figure cmp-wide">
+            <div class="cmp-player" tabindex="0" role="group" aria-label="Comparison player" aria-keyshortcuts="Space K F ArrowLeft ArrowRight">
+              <div class="cmp-stage">
+                <div class="ab-slider">
+                  <div class="ab-bottom"><video class="vid-other" muted loop playsinline preload="metadata"></video></div>
+                  <div class="ab-top"><div class="ab-inner"><video class="vid-ours" muted loop playsinline preload="metadata"></video></div></div>
+                  <span class="ab-label left"></span>
+                  <span class="ab-label right"></span>
+                  <div class="ab-handle" aria-hidden="true">
+                    <span class="grip"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5V7zm8 0v10l5-5-5-5z"/></svg></span>
+                  </div>
+                </div>
+              </div>
+              <div class="cmp-bar">
+                <button type="button" class="exp-chip cmp-btn cmp-play" aria-label="Pause (Space)" title="Pause (Space)">
+                  <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg>
+                  <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.14v13.72a.5.5 0 0 0 .76.43l10.6-6.86a.5.5 0 0 0 0-.86L8.76 4.71A.5.5 0 0 0 8 5.14z"/></svg>
+                </button>
+                <span class="cmp-clock"><span class="cmp-cur">0:00.0</span> / <span class="cmp-dur">0:00.0</span></span>
+                <div class="cmp-seek" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00.0">
+                  <div class="cmp-seek-rail"><div class="cmp-seek-fill"></div><div class="cmp-seek-ticks"></div></div>
+                  <div class="cmp-seek-knob"></div>
+                </div>
+                <span class="cmp-time"></span>
+                <button type="button" class="exp-chip cmp-btn cmp-fs" aria-label="Full screen (F)" title="Full screen (F)">
+                  <svg class="ico-fs-enter" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>
+                  <svg class="ico-fs-exit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>
+                </button>
+              </div>
+            </div>
+          </figure>
+        </div>
+
+        <div class="cmp" id="ablation" data-part="ablation">
+          <h3 class="subhead">3. Ablation Study</h3>
+          <p>
+            The full <b class="ours">DOOM-GS (Ours)</b> model at 20M Gaussians against variants with one component
+            removed at a time: space-time repacking, camera scheduling, or locality-constrained relocation.
+          </p>
+          <div class="exp-controls cmp-controls">
+            <div class="exp-group" data-axis="scene">
+              <div class="exp-group-label">Scene</div>
+              <div class="exp-btns"></div>
+            </div>
+            <div class="exp-group" data-axis="other">
+              <div class="exp-group-label"></div>
+              <div class="exp-btns"></div>
+            </div>
+          </div>
+          <figure class="exp-figure cmp-wide">
+            <div class="cmp-player" tabindex="0" role="group" aria-label="Comparison player" aria-keyshortcuts="Space K F ArrowLeft ArrowRight">
+              <div class="cmp-stage">
+                <div class="ab-slider">
+                  <div class="ab-bottom"><video class="vid-other" muted loop playsinline preload="metadata"></video></div>
+                  <div class="ab-top"><div class="ab-inner"><video class="vid-ours" muted loop playsinline preload="metadata"></video></div></div>
+                  <span class="ab-label left"></span>
+                  <span class="ab-label right"></span>
+                  <div class="ab-handle" aria-hidden="true">
+                    <span class="grip"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5V7zm8 0v10l5-5-5-5z"/></svg></span>
+                  </div>
+                </div>
+              </div>
+              <div class="cmp-bar">
+                <button type="button" class="exp-chip cmp-btn cmp-play" aria-label="Pause (Space)" title="Pause (Space)">
+                  <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg>
+                  <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.14v13.72a.5.5 0 0 0 .76.43l10.6-6.86a.5.5 0 0 0 0-.86L8.76 4.71A.5.5 0 0 0 8 5.14z"/></svg>
+                </button>
+                <span class="cmp-clock"><span class="cmp-cur">0:00.0</span> / <span class="cmp-dur">0:00.0</span></span>
+                <div class="cmp-seek" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00.0">
+                  <div class="cmp-seek-rail"><div class="cmp-seek-fill"></div><div class="cmp-seek-ticks"></div></div>
+                  <div class="cmp-seek-knob"></div>
+                </div>
+                <span class="cmp-time"></span>
+                <button type="button" class="exp-chip cmp-btn cmp-fs" aria-label="Full screen (F)" title="Full screen (F)">
+                  <svg class="ico-fs-enter" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>
+                  <svg class="ico-fs-exit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>
+                </button>
+              </div>
+            </div>
+          </figure>
+        </div>
+
+        <div class="cmp" id="variants" data-part="variants">
+          <h3 class="subhead">4. Dynamic Representation Variants</h3>
+          <p>
+            Qualitative comparison of DOOM-GS variants using different dynamic GS representations. Held-out
+            street-level and aerial views from Block. All variants use DOOM-GS with 20M Gaussians and identical
+            out-of-core settings, changing only the dynamic representation.
+          </p>
+          <div class="exp-controls cmp-controls">
+            <div class="exp-group" data-axis="scene">
+              <div class="exp-group-label">Scene</div>
+              <div class="exp-btns"></div>
+            </div>
+            <div class="exp-group" data-axis="other">
+              <div class="exp-group-label"></div>
+              <div class="exp-btns"></div>
+            </div>
+          </div>
+          <figure class="exp-figure cmp-wide">
+            <div class="cmp-player" tabindex="0" role="group" aria-label="Comparison player" aria-keyshortcuts="Space K F ArrowLeft ArrowRight">
+              <div class="cmp-stage">
+                <div class="ab-slider">
+                  <div class="ab-bottom"><video class="vid-other" muted loop playsinline preload="metadata"></video></div>
+                  <div class="ab-top"><div class="ab-inner"><video class="vid-ours" muted loop playsinline preload="metadata"></video></div></div>
+                  <span class="ab-label left"></span>
+                  <span class="ab-label right"></span>
+                  <div class="ab-handle" aria-hidden="true">
+                    <span class="grip"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5V7zm8 0v10l5-5-5-5z"/></svg></span>
+                  </div>
+                </div>
+              </div>
+              <div class="cmp-bar">
+                <button type="button" class="exp-chip cmp-btn cmp-play" aria-label="Pause (Space)" title="Pause (Space)">
+                  <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg>
+                  <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.14v13.72a.5.5 0 0 0 .76.43l10.6-6.86a.5.5 0 0 0 0-.86L8.76 4.71A.5.5 0 0 0 8 5.14z"/></svg>
+                </button>
+                <span class="cmp-clock"><span class="cmp-cur">0:00.0</span> / <span class="cmp-dur">0:00.0</span></span>
+                <div class="cmp-seek" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00.0">
+                  <div class="cmp-seek-rail"><div class="cmp-seek-fill"></div><div class="cmp-seek-ticks"></div></div>
+                  <div class="cmp-seek-knob"></div>
+                </div>
+                <span class="cmp-time"></span>
+                <button type="button" class="exp-chip cmp-btn cmp-fs" aria-label="Full screen (F)" title="Full screen (F)">
+                  <svg class="ico-fs-enter" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>
+                  <svg class="ico-fs-exit" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>
+                </button>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="dataset" aria-label="Dataset">
+      <h2 class="section-title grad-text">DynamicMatrixCity Dataset</h2>
+      <div class="section-body">
+        <p>
+          In addition we propose <b class="ours">DynamicMatrixCity</b>, our city-scale multi-view dataset for evaluating
+          large-scale dynamic Gaussian splatting. Built on MatrixCity&rsquo;s Small City, it adds simulated vehicles and
+          pedestrians and provides three increasingly large scenes, Corner, Block, and District, captured from thousands
+          of synchronized and calibrated views. It supports controlled evaluation of dynamic reconstruction, temporal
+          consistency, and out-of-core training at massive scale.
+        </p>
+        <figure>
+          <div class="media-frame">
+            <img class="dark-only" src="assets/images/dmc_dataset.webp" width="2400" height="754"
+                 alt="Layout and camera placement of the DynamicMatrixCity scenes District, Block and Corner, showing street-level, aerial and held-out cameras and each scene's extent.">
+            <img class="light-only" src="assets/images/dmc_dataset_light.webp" width="2400" height="754"
+                 alt="Layout and camera placement of the DynamicMatrixCity scenes District, Block and Corner, showing street-level, aerial and held-out cameras and each scene's extent.">
+          </div>
+          <figcaption class="center">
+            Layout and camera placement of the three <i>DynamicMatrixCity</i> scenes: District, Block and Corner.
+          </figcaption>
+        </figure>
+
+        <figure class="data-table">
+          <figcaption class="center">Summary of the <i>DynamicMatrixCity</i> scenes. Each camera records 120 frames.</figcaption>
+          <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Scene</th><th>Extent</th><th>Cameras</th><th>Held out</th><th>Frames</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><i>Corner</i></td><td>80&thinsp;&times;&thinsp;80&thinsp;m core</td><td>572</td><td>12</td><td>68,640</td></tr>
+              <tr><td><i>Block</i></td><td>260&thinsp;&times;&thinsp;150&thinsp;m</td><td>4,096</td><td>64</td><td>491,520</td></tr>
+              <tr><td><i>District</i></td><td>1,870&thinsp;&times;&thinsp;1,500&thinsp;m</td><td>8,192</td><td>64</td><td>983,040</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </figure>
+
+        <h3 class="subhead">Dynamic Content</h3>
+        <p>
+          The recording contains 2,165 vehicles from 10 models (seven cars, one truck, and two vans) and 15,000
+          animated pedestrians. Water surfaces are also animated and contribute to scene dynamics.
+        </p>
+
+        <figure class="cmp-wide dataset-video">
+          <div class="media-frame">
+            <video class="loop-video" src="https://doomgs.cdn.yilmazdoga.net/videos/dataset/dmc_source_grid.mp4" width="1920" height="810" muted loop playsinline preload="metadata"></video>
+          </div>
+          <figcaption class="center">Sample views from <i>DynamicMatrixCity</i>.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>DOOM-GS &middot; Dynamic Out-of-core Optimization for Massive Gaussian Splatting</div>
+    </footer>
+  </main>
+
+  <script src="js/scripts.js"></script>
+  <script src="js/compare.js"></script>
+</body>
+
+</html>
